@@ -781,3 +781,54 @@ AFTER UPDATE ON airport.Flight
 FOR EACH ROW
 EXECUTE FUNCTION airport.LogFlightHistory();
 
+CREATE ROLE head
+LOGIN
+PASSWORD 'pass';
+
+GRANT ALL PRIVILEGES ON DATABASE airport TO head;
+
+CREATE ROLE superhead
+SUPERUSER
+LOGIN
+PASSWORD 'pass123';
+
+
+BEGIN TRANSACTION;
+
+INSERT INTO airport.contact (email, phone_number)
+VALUES
+('johnnes.dir@example.com', '+1 223-456-7890'),
+('jasmine.smith@example.com', '+1 387-654-3210'),
+('michel.viol@example.com', '+1 455-123-4567'),
+('sara.james@example.com', '+1 577-888-9999'),
+('roberto.wilsone@example.com', '+1 644-555-6666'),
+('emil.omas@example.com', '+1 711-222-3333'),
+('will.milla@example.com', '+1 866-777-8888'),
+('olivier.davidson@example.com', '+1 899-888-7777'),
+('jane.jons@example.com', '+1 933-444-5555'),
+('avat.anders@example.com', '+1 122-333-4444'),
+('ben.whit@example.com', '+1 255-444-3333'),
+('miat.taylore@example.com', '+1 377-666-5555'),
+('logn.ander@example.com', '+1 499-222-1111'),
+('luca.martinez@example.com', '+1 588-999-0000'),
+('ethany.moores@example.com', '+1 644-555-6666'),
+('amelie.jacks@example.com', '+1 711-222-3333'),
+('henrique.harrison@example.com', '+1 866-777-8888'),
+('chloe.wilsoner@example.com', '+1 922-333-4444'),
+('alexandra.clarke@example.com', '+1 155-444-3333'),
+('lilianna.halle@example.com', '+1 277-666-5555'),
+('daniele.greeno@example.com', '+1 399-222-1111'),
+('sophie.lewiss@example.com', '+1 488-999-0000'),
+('matt.thomp@example.com', '+1 544-555-6666'),
+('avae.walkerson@example.com', '+1 611-222-3333'),
+('samuela.hills@example.com', '+1 766-777-8888'),
+('mic.younger@example.com', '+1 822-333-4444'),
+('jacobs.kings@example.com', '+1 955-444-3333'),
+('emilso.leer@example.com', '+1 177-666-5555'),
+('noami.turnera@example.com', '+1 199-222-1111'),
+('graces.carters@example.com', '+1 288-999-0000');
+
+COMMIT;
+
+
+
