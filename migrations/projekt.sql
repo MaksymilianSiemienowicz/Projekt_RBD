@@ -739,6 +739,50 @@ VALUES
 
 
 --Views & Functions & Procedures
+CREATE VIEW airport_LeftJoinView AS
+SELECT f.id AS flight_id, f.flight_number, a.name AS airline_name, t.name AS terminal_name, f.departure_date, f.departure_time, f.arrival_date, f.arrival_time, f.flight_status, f.aircraft_type, f.seats_amount, f.destination
+FROM airport.Flight f
+LEFT JOIN airport.Airline a ON f.airline_id = a.id
+LEFT JOIN airport.Terminal t ON f.terminal_id = t.id;
+
+CREATE VIEW airport_RightJoinView AS
+SELECT Flight.flight_number, Airline.name AS airline_name, Terminal.name AS terminal_name
+FROM airport.Flight
+RIGHT JOIN airport.Airline ON Flight.airline_id = Airline.id
+RIGHT JOIN airport.Terminal ON Flight.terminal_id = Terminal.id;
+
+CREATE VIEW airport_InnerJoinView AS
+SELECT Flight.flight_number, Airline.name AS airline_name, Terminal.name AS terminal_name
+FROM airport.Flight
+INNER JOIN airport.Airline ON Flight.airline_id = Airline.id
+INNER JOIN airport.Terminal ON Flight.terminal_id = Terminal.id;
+
+CREATE VIEW airport.FullOuterJoinView AS
+SELECT fh.id AS flight_history_id, fh.flight_id, fh.date_time AS flight_history_date_time, fh.description AS flight_history_description,
+       ir.id AS incident_report_id, ir.passenger_id, ir.date_time AS incident_report_date_time, ir.description AS incident_report_description
+FROM airport.Flight_History AS fh
+FULL OUTER JOIN airport.Incident_Report AS ir ON fh.flight_id = ir.flight_id;
+
+CREATE VIEW airport_UnionView AS
+SELECT id, name, gate_count
+FROM airport.Terminal
+UNION
+SELECT id, company_name AS name,  NULL AS gate_count
+FROM airport.Baggage_Carrier;
+
+CREATE VIEW airport.IntersectView AS
+SELECT flight_id, description
+FROM airport.Flight_History
+INTERSECT
+SELECT flight_id, description
+FROM airport.Incident_Report;
+
+CREATE VIEW airport.ExceptView AS
+SELECT flight_id, description
+FROM airport.Flight_History
+EXCEPT
+SELECT flight_id, description
+FROM airport.Incident_Report;
 
 CREATE VIEW airport.Flight_Details AS
 SELECT f.id AS flight_id, f.flight_number, a.name AS airline_name, t.name AS terminal_name
@@ -763,8 +807,6 @@ BEGIN
     WHERE departure_date < CURRENT_DATE AND departure_time < CURRENT_TIME;
 END;
 $$;
-
-
 
 CREATE OR REPLACE FUNCTION airport.LogFlightHistory()
 RETURNS TRIGGER
@@ -829,6 +871,4 @@ VALUES
 ('graces.carters@example.com', '+1 288-999-0000');
 
 COMMIT;
-
-
 
