@@ -736,3 +736,45 @@ VALUES
   (14, 28, '2023-06-14 17:55:00', 'Assisted in handling oversized and special baggage'),
   (15, 29, '2023-06-15 12:10:00', 'Performed security screening for passengers and luggage'),
   (15, 30, '2023-06-15 14:35:00', 'Coordinated with air traffic control for flight departure');
+
+
+CREATE VIEW airport.Flight_Details AS
+SELECT f.id AS flight_id, f.flight_number, a.name AS airline_name, t.name AS terminal_name
+FROM airport.Flight f
+JOIN airport.Airline a ON f.airline_id = a.id
+JOIN airport.Terminal t ON f.terminal_id = t.id;
+
+
+CREATE VIEW airport.Passenger_Details AS
+SELECT p.id AS passenger_id, p.first_name, p.last_name, f.flight_number, a.name AS airline_name
+FROM airport.Passenger pg
+JOIN airport.Person p ON pg.person_id = p.id
+JOIN airport.Flight f ON pg.person_id = f.id
+JOIN airport.Airline a ON f.airline_id = a.id;
+
+CREATE OR REPLACE PROCEDURE airport.UpdateFlightStatus()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE airport.Flight
+    SET flight_status = 'Delayed'
+    WHERE departure_date < CURRENT_DATE AND departure_time < CURRENT_TIME;
+END;
+$$;
+
+
+
+CREATE OR REPLACE FUNCTION airport.LogFlightHistory()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+INSERT INTO airport.Flight_History (flight_id, date_time, description)
+VALUES (NEW.id, NOW(), 'Flight status updated');
+RETURN NEW;
+END;
+$$;
+CREATE TRIGGER flight_status_update
+AFTER UPDATE ON airport.Flight
+FOR EACH ROW
+EXECUTE FUNCTION airport.LogFlightHistory();
